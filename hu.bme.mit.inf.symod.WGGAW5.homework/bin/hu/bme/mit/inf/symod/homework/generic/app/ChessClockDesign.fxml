@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="scene" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hu.bme.mit.inf.symod.homework.generic.app.ChessClockController">
+   <children>
+      <Group layoutX="-306.0" layoutY="21.0">
+         <children>
+            <Button fx:id="whiteIncrementButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="320.0" layoutY="85.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="96.0">
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@WhiteButton.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Group>
+      <Group layoutX="316.0" layoutY="21.0">
+         <children>
+            <Button fx:id="blackDecrementButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="54.0" layoutY="85.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="96.0">
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@BlackButton.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Group>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="53.0" layoutX="46.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="151.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="53.0" layoutX="402.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="151.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="53.0" layoutX="31.0" layoutY="220.0" stroke="BLACK" strokeType="INSIDE" width="539.0" />
+      <Label fx:id="whiteLabel" layoutX="47.0" layoutY="33.0" text="--:--" textFill="LIME">
+         <font>
+            <Font name="Register" size="45.0" />
+         </font>
+      </Label>
+      <Label fx:id="blackLabel" layoutX="403.0" layoutY="33.0" text="--:--" textFill="LIME">
+         <font>
+            <Font name="Register" size="45.0" />
+         </font>
+      </Label>
+      <Label fx:id="mainLabel" layoutX="31.0" layoutY="224.0" prefHeight="44.0" prefWidth="539.0" text="Main label" textAlignment="CENTER" textFill="LIME">
+         <font>
+            <Font name="Register" size="40.0" />
+         </font>
+      </Label>
+      <Button fx:id="modeButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="320.0" layoutY="286.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="215.0" text="MODE">
+         <font>
+            <Font name="Consolas Bold" size="28.0" />
+         </font>
+      </Button>
+      <Button fx:id="startResetButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="65.0" layoutY="286.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="215.0" text="START/RESET">
+         <font>
+            <Font name="Consolas Bold" size="28.0" />
+         </font>
+      </Button>
+      <ImageView fx:id="whistle" fitHeight="100.0" fitWidth="100.0" layoutX="250.0" layoutY="103.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Whistle.png" />
+         </image>
+      </ImageView>
+   </children>
+</Pane>

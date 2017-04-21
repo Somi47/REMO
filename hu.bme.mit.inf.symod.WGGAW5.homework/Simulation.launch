@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.yakindu.sct.simulation.core.launch.statechart">
+<stringAttribute key="bad_container_name" value="\hu.bme.mit.inf.symod.WGGAW5.homework"/>
+<booleanAttribute key="cycleBased" value="true"/>
+<intAttribute key="cyclePeriod" value="200"/>
+<booleanAttribute key="eventDriven" value="false"/>
+<stringAttribute key="filename" value="/hu.bme.mit.inf.symod.WGGAW5.homework/homeworkWGGAW5.sct"/>
+<stringAttribute key="operationClass" value=""/>
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING" value="ISO-8859-1"/>
+</launchConfiguration>

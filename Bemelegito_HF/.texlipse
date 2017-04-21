@@ -1,0 +1,13 @@
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=latex/tmp
+mainTexFile=remo_hf_spec.tex
+outputFile=homeworkWGGAW5.pdf
+langSpell=en
+markDer=false
+srcDir=latex/
+	
