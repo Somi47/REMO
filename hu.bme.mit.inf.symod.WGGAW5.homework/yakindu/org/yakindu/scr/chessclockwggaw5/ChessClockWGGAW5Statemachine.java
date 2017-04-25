@@ -96,8 +96,13 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		main_region_Play_inner_region_Black_moves,
 		main_region_Play_inner_region_White_moves,
 		main_region_Play_inner_region_White_adjourned,
+		main_region_Play_inner_region_Black_incremented,
+		main_region_Play_inner_region_White_incremented,
+		main_region_Play_inner_region_White_fallen,
+		main_region_Play_inner_region_Black_fallen,
 		main_region_Init_time_white,
 		main_region_Init_time_black,
+		main_region_Increment_time,
 		$NullState$
 	};
 	
@@ -107,7 +112,7 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	private ITimer timer;
 	
-	private final boolean[] timeEvents = new boolean[2];
+	private final boolean[] timeEvents = new boolean[8];
 	private long whiteInitialTime;
 	
 	protected void setWhiteInitialTime(long value) {
@@ -126,6 +131,16 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	protected long getBlackInitialTime() {
 		return blackInitialTime;
+	}
+	
+	private long incrementTime;
+	
+	protected void setIncrementTime(long value) {
+		incrementTime = value;
+	}
+	
+	protected long getIncrementTime() {
+		return incrementTime;
 	}
 	
 	private boolean whiteAdjourned;
@@ -173,6 +188,8 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		setWhiteInitialTime(90);
 		
 		setBlackInitialTime(90);
+		
+		setIncrementTime(0);
 		
 		setWhiteAdjourned(false);
 		
@@ -235,7 +252,7 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 			return stateVector[0] == State.main_region_Ready_to_Play;
 		case main_region_Play:
 			return stateVector[0].ordinal() >= State.
-					main_region_Play.ordinal()&& stateVector[0].ordinal() <= State.main_region_Play_inner_region_White_adjourned.ordinal();
+					main_region_Play.ordinal()&& stateVector[0].ordinal() <= State.main_region_Play_inner_region_Black_fallen.ordinal();
 		case main_region_Play_inner_region_Black_adjourned:
 			return stateVector[0] == State.main_region_Play_inner_region_Black_adjourned;
 		case main_region_Play_inner_region_Black_moves:
@@ -244,10 +261,20 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 			return stateVector[0] == State.main_region_Play_inner_region_White_moves;
 		case main_region_Play_inner_region_White_adjourned:
 			return stateVector[0] == State.main_region_Play_inner_region_White_adjourned;
+		case main_region_Play_inner_region_Black_incremented:
+			return stateVector[0] == State.main_region_Play_inner_region_Black_incremented;
+		case main_region_Play_inner_region_White_incremented:
+			return stateVector[0] == State.main_region_Play_inner_region_White_incremented;
+		case main_region_Play_inner_region_White_fallen:
+			return stateVector[0] == State.main_region_Play_inner_region_White_fallen;
+		case main_region_Play_inner_region_Black_fallen:
+			return stateVector[0] == State.main_region_Play_inner_region_Black_fallen;
 		case main_region_Init_time_white:
 			return stateVector[0] == State.main_region_Init_time_white;
 		case main_region_Init_time_black:
 			return stateVector[0] == State.main_region_Init_time_black;
+		case main_region_Increment_time:
+			return stateVector[0] == State.main_region_Increment_time;
 		default:
 			return false;
 		}
@@ -306,39 +333,55 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	}
 	
 	private boolean check_main_region_Play_inner_region_Black_moves_tr0_tr0() {
-		return (sCIButtons.blackButton) && (getBlackAdjourned()==false);
+		return sCIButtons.modeButton;
 	}
 	
 	private boolean check_main_region_Play_inner_region_Black_moves_tr1_tr1() {
-		return sCIButtons.modeButton;
+		return sCIButtons.blackButton;
 	}
 	
 	private boolean check_main_region_Play_inner_region_Black_moves_tr2_tr2() {
-		return (sCIButtons.blackButton) && (getBlackAdjourned()==true);
+		return (timeEvents[0]) && (sCIDisplay.getBlackDisplay()>1);
 	}
 	
-	private boolean check_main_region_Play_inner_region_Black_moves_lr0_lr0() {
-		return timeEvents[0];
+	private boolean check_main_region_Play_inner_region_Black_moves_tr3_tr3() {
+		return (timeEvents[1]) && (sCIDisplay.getBlackDisplay()<=1);
 	}
 	
 	private boolean check_main_region_Play_inner_region_White_moves_tr0_tr0() {
-		return (sCIButtons.whiteButton) && (getWhiteAdjourned()==false);
-	}
-	
-	private boolean check_main_region_Play_inner_region_White_moves_tr1_tr1() {
 		return sCIButtons.modeButton;
 	}
 	
-	private boolean check_main_region_Play_inner_region_White_moves_tr2_tr2() {
-		return (sCIButtons.whiteButton) && (getWhiteAdjourned()==true);
+	private boolean check_main_region_Play_inner_region_White_moves_tr1_tr1() {
+		return sCIButtons.whiteButton;
 	}
 	
-	private boolean check_main_region_Play_inner_region_White_moves_lr0_lr0() {
-		return timeEvents[1];
+	private boolean check_main_region_Play_inner_region_White_moves_tr2_tr2() {
+		return (timeEvents[2]) && (sCIDisplay.getWhiteDisplay()>1);
+	}
+	
+	private boolean check_main_region_Play_inner_region_White_moves_tr3_tr3() {
+		return (timeEvents[3]) && (sCIDisplay.getWhiteDisplay()<=1);
 	}
 	
 	private boolean check_main_region_Play_inner_region_White_adjourned_tr0_tr0() {
 		return sCIButtons.modeButton;
+	}
+	
+	private boolean check_main_region_Play_inner_region_Black_incremented_tr0_tr0() {
+		return (timeEvents[4]) && (getBlackAdjourned()==true);
+	}
+	
+	private boolean check_main_region_Play_inner_region_Black_incremented_tr1_tr1() {
+		return (timeEvents[5]) && (getBlackAdjourned()==false);
+	}
+	
+	private boolean check_main_region_Play_inner_region_White_incremented_tr0_tr0() {
+		return (timeEvents[6]) && (getWhiteAdjourned()==true);
+	}
+	
+	private boolean check_main_region_Play_inner_region_White_incremented_tr1_tr1() {
+		return (timeEvents[7]) && (getWhiteAdjourned()==false);
 	}
 	
 	private boolean check_main_region_Init_time_white_tr0_tr0() {
@@ -366,11 +409,27 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	}
 	
 	private boolean check_main_region_Init_time_black_tr2_tr2() {
-		return sCIButtons.modeButton;
+		return sCIButtons.startButton;
 	}
 	
 	private boolean check_main_region_Init_time_black_tr3_tr3() {
+		return sCIButtons.modeButton;
+	}
+	
+	private boolean check_main_region_Increment_time_tr0_tr0() {
+		return (sCIButtons.blackButton) && (getIncrementTime()>0);
+	}
+	
+	private boolean check_main_region_Increment_time_tr1_tr1() {
+		return (sCIButtons.whiteButton) && (getIncrementTime()<30);
+	}
+	
+	private boolean check_main_region_Increment_time_tr2_tr2() {
 		return sCIButtons.startButton;
+	}
+	
+	private boolean check_main_region_Increment_time_tr3_tr3() {
+		return sCIButtons.modeButton;
 	}
 	
 	private void effect_main_region_Ready_to_Play_tr0() {
@@ -388,6 +447,8 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	private void effect_main_region_Ready_to_Play_tr1() {
 		exitSequence_main_region_Ready_to_Play();
+		sCIBeeper.operationCallback.beep();
+		
 		enterSequence_main_region_Init_time_white_default();
 	}
 	
@@ -403,48 +464,82 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	private void effect_main_region_Play_inner_region_Black_moves_tr0() {
 		exitSequence_main_region_Play_inner_region_Black_moves();
-		enterSequence_main_region_Play_inner_region_White_moves_default();
-	}
-	
-	private void effect_main_region_Play_inner_region_Black_moves_tr1() {
-		exitSequence_main_region_Play_inner_region_Black_moves();
 		setBlackAdjourned(true);
 		
 		enterSequence_main_region_Play_inner_region_Black_moves_default();
 	}
 	
+	private void effect_main_region_Play_inner_region_Black_moves_tr1() {
+		exitSequence_main_region_Play_inner_region_Black_moves();
+		sCIDisplay.setBlackDisplay(sCIDisplay.getBlackDisplay() + incrementTime);
+		
+		enterSequence_main_region_Play_inner_region_Black_incremented_default();
+	}
+	
 	private void effect_main_region_Play_inner_region_Black_moves_tr2() {
 		exitSequence_main_region_Play_inner_region_Black_moves();
-		enterSequence_main_region_Play_inner_region_Black_adjourned_default();
-	}
-	
-	private void effect_main_region_Play_inner_region_Black_moves_lr0_lr0() {
 		sCIDisplay.setBlackDisplay(sCIDisplay.getBlackDisplay() - 1);
-	}
-	
-	private void effect_main_region_Play_inner_region_White_moves_tr0() {
-		exitSequence_main_region_Play_inner_region_White_moves();
+		
 		enterSequence_main_region_Play_inner_region_Black_moves_default();
 	}
 	
-	private void effect_main_region_Play_inner_region_White_moves_tr1() {
+	private void effect_main_region_Play_inner_region_Black_moves_tr3() {
+		exitSequence_main_region_Play_inner_region_Black_moves();
+		sCIDisplay.setBlackDisplay(sCIDisplay.getBlackDisplay() - 1);
+		
+		enterSequence_main_region_Play_inner_region_Black_fallen_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_White_moves_tr0() {
 		exitSequence_main_region_Play_inner_region_White_moves();
 		setWhiteAdjourned(true);
 		
 		enterSequence_main_region_Play_inner_region_White_moves_default();
 	}
 	
-	private void effect_main_region_Play_inner_region_White_moves_tr2() {
+	private void effect_main_region_Play_inner_region_White_moves_tr1() {
 		exitSequence_main_region_Play_inner_region_White_moves();
-		enterSequence_main_region_Play_inner_region_White_adjourned_default();
+		sCIDisplay.setWhiteDisplay(sCIDisplay.getWhiteDisplay() + incrementTime);
+		
+		enterSequence_main_region_Play_inner_region_White_incremented_default();
 	}
 	
-	private void effect_main_region_Play_inner_region_White_moves_lr0_lr0() {
+	private void effect_main_region_Play_inner_region_White_moves_tr2() {
+		exitSequence_main_region_Play_inner_region_White_moves();
 		sCIDisplay.setWhiteDisplay(sCIDisplay.getWhiteDisplay() - 1);
+		
+		enterSequence_main_region_Play_inner_region_White_moves_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_White_moves_tr3() {
+		exitSequence_main_region_Play_inner_region_White_moves();
+		sCIDisplay.setWhiteDisplay(sCIDisplay.getWhiteDisplay() - 1);
+		
+		enterSequence_main_region_Play_inner_region_White_fallen_default();
 	}
 	
 	private void effect_main_region_Play_inner_region_White_adjourned_tr0() {
 		exitSequence_main_region_Play_inner_region_White_adjourned();
+		enterSequence_main_region_Play_inner_region_Black_moves_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_Black_incremented_tr0() {
+		exitSequence_main_region_Play_inner_region_Black_incremented();
+		enterSequence_main_region_Play_inner_region_Black_adjourned_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_Black_incremented_tr1() {
+		exitSequence_main_region_Play_inner_region_Black_incremented();
+		enterSequence_main_region_Play_inner_region_White_moves_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_White_incremented_tr0() {
+		exitSequence_main_region_Play_inner_region_White_incremented();
+		enterSequence_main_region_Play_inner_region_White_adjourned_default();
+	}
+	
+	private void effect_main_region_Play_inner_region_White_incremented_tr1() {
+		exitSequence_main_region_Play_inner_region_White_incremented();
 		enterSequence_main_region_Play_inner_region_Black_moves_default();
 	}
 	
@@ -464,6 +559,8 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	private void effect_main_region_Init_time_white_tr2() {
 		exitSequence_main_region_Init_time_white();
+		sCIBeeper.operationCallback.beep();
+		
 		enterSequence_main_region_Init_time_black_default();
 	}
 	
@@ -490,14 +587,44 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	private void effect_main_region_Init_time_black_tr2() {
 		exitSequence_main_region_Init_time_black();
-		enterSequence_main_region_Ready_to_Play_default();
+		setBlackInitialTime(90);
+		
+		enterSequence_main_region_Init_time_black_default();
 	}
 	
 	private void effect_main_region_Init_time_black_tr3() {
 		exitSequence_main_region_Init_time_black();
-		setBlackInitialTime(90);
+		sCIBeeper.operationCallback.beep();
 		
-		enterSequence_main_region_Init_time_black_default();
+		enterSequence_main_region_Increment_time_default();
+	}
+	
+	private void effect_main_region_Increment_time_tr0() {
+		exitSequence_main_region_Increment_time();
+		setIncrementTime(getIncrementTime() - 1);
+		
+		enterSequence_main_region_Increment_time_default();
+	}
+	
+	private void effect_main_region_Increment_time_tr1() {
+		exitSequence_main_region_Increment_time();
+		setIncrementTime(getIncrementTime() + 1);
+		
+		enterSequence_main_region_Increment_time_default();
+	}
+	
+	private void effect_main_region_Increment_time_tr2() {
+		exitSequence_main_region_Increment_time();
+		setIncrementTime(0);
+		
+		enterSequence_main_region_Increment_time_default();
+	}
+	
+	private void effect_main_region_Increment_time_tr3() {
+		exitSequence_main_region_Increment_time();
+		sCIBeeper.operationCallback.beep();
+		
+		enterSequence_main_region_Ready_to_Play_default();
 	}
 	
 	/* Entry action for state 'Ready_to_Play'. */
@@ -520,14 +647,26 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	private void entryAction_main_region_Play_inner_region_Black_moves() {
 		timer.setTimer(this, 0, 1 * 1000, true);
 		
+		timer.setTimer(this, 1, 1 * 1000, true);
+		
 		sCIDisplay.setText("Black moves");
+		
+		if (sCIDisplay.getBlackDisplay()<=5) {
+			sCIBeeper.operationCallback.beep();
+		}
 	}
 	
 	/* Entry action for state 'White_moves'. */
 	private void entryAction_main_region_Play_inner_region_White_moves() {
-		timer.setTimer(this, 1, 1 * 1000, true);
+		timer.setTimer(this, 2, 1 * 1000, true);
+		
+		timer.setTimer(this, 3, 1 * 1000, true);
 		
 		sCIDisplay.setText("White moves");
+		
+		if (sCIDisplay.getWhiteDisplay()<=5) {
+			sCIBeeper.operationCallback.beep();
+		}
 	}
 	
 	/* Entry action for state 'White_adjourned'. */
@@ -535,6 +674,42 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		sCIDisplay.setText("White adjourned");
 		
 		setWhiteAdjourned(false);
+	}
+	
+	/* Entry action for state 'Black_incremented'. */
+	private void entryAction_main_region_Play_inner_region_Black_incremented() {
+		timer.setTimer(this, 4, 0 * 1000, false);
+		
+		timer.setTimer(this, 5, 0 * 1000, false);
+		
+		if (sCIDisplay.getBlackDisplay()>1200) {
+			sCIDisplay.setBlackDisplay(1200);
+		}
+	}
+	
+	/* Entry action for state 'White_incremented'. */
+	private void entryAction_main_region_Play_inner_region_White_incremented() {
+		timer.setTimer(this, 6, 0 * 1000, false);
+		
+		timer.setTimer(this, 7, 0 * 1000, false);
+		
+		if (sCIDisplay.getWhiteDisplay()>1200) {
+			sCIDisplay.setWhiteDisplay(1200);
+		}
+	}
+	
+	/* Entry action for state 'White_fallen'. */
+	private void entryAction_main_region_Play_inner_region_White_fallen() {
+		sCIBeeper.operationCallback.beep();
+		
+		sCIDisplay.setText("White flag fallen");
+	}
+	
+	/* Entry action for state 'Black_fallen'. */
+	private void entryAction_main_region_Play_inner_region_Black_fallen() {
+		sCIBeeper.operationCallback.beep();
+		
+		sCIDisplay.setText("Black flag fallen");
 	}
 	
 	/* Entry action for state 'Init_time_white'. */
@@ -555,14 +730,41 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		sCIDisplay.setBlackDisplay(blackInitialTime);
 	}
 	
+	/* Entry action for state 'Increment_time'. */
+	private void entryAction_main_region_Increment_time() {
+		sCIDisplay.setText("Increment time");
+		
+		sCIDisplay.setWhiteDisplay(incrementTime);
+		
+		sCIDisplay.setBlackDisplay(-1);
+	}
+	
 	/* Exit action for state 'Black_moves'. */
 	private void exitAction_main_region_Play_inner_region_Black_moves() {
 		timer.unsetTimer(this, 0);
+		
+		timer.unsetTimer(this, 1);
 	}
 	
 	/* Exit action for state 'White_moves'. */
 	private void exitAction_main_region_Play_inner_region_White_moves() {
-		timer.unsetTimer(this, 1);
+		timer.unsetTimer(this, 2);
+		
+		timer.unsetTimer(this, 3);
+	}
+	
+	/* Exit action for state 'Black_incremented'. */
+	private void exitAction_main_region_Play_inner_region_Black_incremented() {
+		timer.unsetTimer(this, 4);
+		
+		timer.unsetTimer(this, 5);
+	}
+	
+	/* Exit action for state 'White_incremented'. */
+	private void exitAction_main_region_Play_inner_region_White_incremented() {
+		timer.unsetTimer(this, 6);
+		
+		timer.unsetTimer(this, 7);
 	}
 	
 	/* 'default' enter sequence for state Ready_to_Play */
@@ -600,6 +802,34 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		stateVector[0] = State.main_region_Play_inner_region_White_adjourned;
 	}
 	
+	/* 'default' enter sequence for state Black_incremented */
+	private void enterSequence_main_region_Play_inner_region_Black_incremented_default() {
+		entryAction_main_region_Play_inner_region_Black_incremented();
+		nextStateIndex = 0;
+		stateVector[0] = State.main_region_Play_inner_region_Black_incremented;
+	}
+	
+	/* 'default' enter sequence for state White_incremented */
+	private void enterSequence_main_region_Play_inner_region_White_incremented_default() {
+		entryAction_main_region_Play_inner_region_White_incremented();
+		nextStateIndex = 0;
+		stateVector[0] = State.main_region_Play_inner_region_White_incremented;
+	}
+	
+	/* 'default' enter sequence for state White_fallen */
+	private void enterSequence_main_region_Play_inner_region_White_fallen_default() {
+		entryAction_main_region_Play_inner_region_White_fallen();
+		nextStateIndex = 0;
+		stateVector[0] = State.main_region_Play_inner_region_White_fallen;
+	}
+	
+	/* 'default' enter sequence for state Black_fallen */
+	private void enterSequence_main_region_Play_inner_region_Black_fallen_default() {
+		entryAction_main_region_Play_inner_region_Black_fallen();
+		nextStateIndex = 0;
+		stateVector[0] = State.main_region_Play_inner_region_Black_fallen;
+	}
+	
 	/* 'default' enter sequence for state Init_time_white */
 	private void enterSequence_main_region_Init_time_white_default() {
 		entryAction_main_region_Init_time_white();
@@ -612,6 +842,13 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		entryAction_main_region_Init_time_black();
 		nextStateIndex = 0;
 		stateVector[0] = State.main_region_Init_time_black;
+	}
+	
+	/* 'default' enter sequence for state Increment_time */
+	private void enterSequence_main_region_Increment_time_default() {
+		entryAction_main_region_Increment_time();
+		nextStateIndex = 0;
+		stateVector[0] = State.main_region_Increment_time;
 	}
 	
 	/* 'default' enter sequence for region main region */
@@ -658,6 +895,34 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		stateVector[0] = State.$NullState$;
 	}
 	
+	/* Default exit sequence for state Black_incremented */
+	private void exitSequence_main_region_Play_inner_region_Black_incremented() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+		
+		exitAction_main_region_Play_inner_region_Black_incremented();
+	}
+	
+	/* Default exit sequence for state White_incremented */
+	private void exitSequence_main_region_Play_inner_region_White_incremented() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+		
+		exitAction_main_region_Play_inner_region_White_incremented();
+	}
+	
+	/* Default exit sequence for state White_fallen */
+	private void exitSequence_main_region_Play_inner_region_White_fallen() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+	}
+	
+	/* Default exit sequence for state Black_fallen */
+	private void exitSequence_main_region_Play_inner_region_Black_fallen() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+	}
+	
 	/* Default exit sequence for state Init_time_white */
 	private void exitSequence_main_region_Init_time_white() {
 		nextStateIndex = 0;
@@ -666,6 +931,12 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 	
 	/* Default exit sequence for state Init_time_black */
 	private void exitSequence_main_region_Init_time_black() {
+		nextStateIndex = 0;
+		stateVector[0] = State.$NullState$;
+	}
+	
+	/* Default exit sequence for state Increment_time */
+	private void exitSequence_main_region_Increment_time() {
 		nextStateIndex = 0;
 		stateVector[0] = State.$NullState$;
 	}
@@ -688,11 +959,26 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		case main_region_Play_inner_region_White_adjourned:
 			exitSequence_main_region_Play_inner_region_White_adjourned();
 			break;
+		case main_region_Play_inner_region_Black_incremented:
+			exitSequence_main_region_Play_inner_region_Black_incremented();
+			break;
+		case main_region_Play_inner_region_White_incremented:
+			exitSequence_main_region_Play_inner_region_White_incremented();
+			break;
+		case main_region_Play_inner_region_White_fallen:
+			exitSequence_main_region_Play_inner_region_White_fallen();
+			break;
+		case main_region_Play_inner_region_Black_fallen:
+			exitSequence_main_region_Play_inner_region_Black_fallen();
+			break;
 		case main_region_Init_time_white:
 			exitSequence_main_region_Init_time_white();
 			break;
 		case main_region_Init_time_black:
 			exitSequence_main_region_Init_time_black();
+			break;
+		case main_region_Increment_time:
+			exitSequence_main_region_Increment_time();
 			break;
 		default:
 			break;
@@ -713,6 +999,18 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 			break;
 		case main_region_Play_inner_region_White_adjourned:
 			exitSequence_main_region_Play_inner_region_White_adjourned();
+			break;
+		case main_region_Play_inner_region_Black_incremented:
+			exitSequence_main_region_Play_inner_region_Black_incremented();
+			break;
+		case main_region_Play_inner_region_White_incremented:
+			exitSequence_main_region_Play_inner_region_White_incremented();
+			break;
+		case main_region_Play_inner_region_White_fallen:
+			exitSequence_main_region_Play_inner_region_White_fallen();
+			break;
+		case main_region_Play_inner_region_Black_fallen:
+			exitSequence_main_region_Play_inner_region_Black_fallen();
 			break;
 		default:
 			break;
@@ -755,8 +1053,8 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 					if (check_main_region_Play_inner_region_Black_moves_tr2_tr2()) {
 						effect_main_region_Play_inner_region_Black_moves_tr2();
 					} else {
-						if (check_main_region_Play_inner_region_Black_moves_lr0_lr0()) {
-							effect_main_region_Play_inner_region_Black_moves_lr0_lr0();
+						if (check_main_region_Play_inner_region_Black_moves_tr3_tr3()) {
+							effect_main_region_Play_inner_region_Black_moves_tr3();
 						}
 					}
 				}
@@ -778,8 +1076,8 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 					if (check_main_region_Play_inner_region_White_moves_tr2_tr2()) {
 						effect_main_region_Play_inner_region_White_moves_tr2();
 					} else {
-						if (check_main_region_Play_inner_region_White_moves_lr0_lr0()) {
-							effect_main_region_Play_inner_region_White_moves_lr0_lr0();
+						if (check_main_region_Play_inner_region_White_moves_tr3_tr3()) {
+							effect_main_region_Play_inner_region_White_moves_tr3();
 						}
 					}
 				}
@@ -795,6 +1093,52 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 			if (check_main_region_Play_inner_region_White_adjourned_tr0_tr0()) {
 				effect_main_region_Play_inner_region_White_adjourned_tr0();
 			}
+		}
+	}
+	
+	/* The reactions of state Black_incremented. */
+	private void react_main_region_Play_inner_region_Black_incremented() {
+		if (check_main_region_Play_tr0_tr0()) {
+			effect_main_region_Play_tr0();
+		} else {
+			if (check_main_region_Play_inner_region_Black_incremented_tr0_tr0()) {
+				effect_main_region_Play_inner_region_Black_incremented_tr0();
+			} else {
+				if (check_main_region_Play_inner_region_Black_incremented_tr1_tr1()) {
+					effect_main_region_Play_inner_region_Black_incremented_tr1();
+				}
+			}
+		}
+	}
+	
+	/* The reactions of state White_incremented. */
+	private void react_main_region_Play_inner_region_White_incremented() {
+		if (check_main_region_Play_tr0_tr0()) {
+			effect_main_region_Play_tr0();
+		} else {
+			if (check_main_region_Play_inner_region_White_incremented_tr0_tr0()) {
+				effect_main_region_Play_inner_region_White_incremented_tr0();
+			} else {
+				if (check_main_region_Play_inner_region_White_incremented_tr1_tr1()) {
+					effect_main_region_Play_inner_region_White_incremented_tr1();
+				}
+			}
+		}
+	}
+	
+	/* The reactions of state White_fallen. */
+	private void react_main_region_Play_inner_region_White_fallen() {
+		if (check_main_region_Play_tr0_tr0()) {
+			effect_main_region_Play_tr0();
+		} else {
+		}
+	}
+	
+	/* The reactions of state Black_fallen. */
+	private void react_main_region_Play_inner_region_Black_fallen() {
+		if (check_main_region_Play_tr0_tr0()) {
+			effect_main_region_Play_tr0();
+		} else {
 		}
 	}
 	
@@ -836,6 +1180,25 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 		}
 	}
 	
+	/* The reactions of state Increment_time. */
+	private void react_main_region_Increment_time() {
+		if (check_main_region_Increment_time_tr0_tr0()) {
+			effect_main_region_Increment_time_tr0();
+		} else {
+			if (check_main_region_Increment_time_tr1_tr1()) {
+				effect_main_region_Increment_time_tr1();
+			} else {
+				if (check_main_region_Increment_time_tr2_tr2()) {
+					effect_main_region_Increment_time_tr2();
+				} else {
+					if (check_main_region_Increment_time_tr3_tr3()) {
+						effect_main_region_Increment_time_tr3();
+					}
+				}
+			}
+		}
+	}
+	
 	/* Default react sequence for initial entry  */
 	private void react_main_region__entry_Default() {
 		enterSequence_main_region_Ready_to_Play_default();
@@ -863,11 +1226,26 @@ public class ChessClockWGGAW5Statemachine implements IChessClockWGGAW5Statemachi
 			case main_region_Play_inner_region_White_adjourned:
 				react_main_region_Play_inner_region_White_adjourned();
 				break;
+			case main_region_Play_inner_region_Black_incremented:
+				react_main_region_Play_inner_region_Black_incremented();
+				break;
+			case main_region_Play_inner_region_White_incremented:
+				react_main_region_Play_inner_region_White_incremented();
+				break;
+			case main_region_Play_inner_region_White_fallen:
+				react_main_region_Play_inner_region_White_fallen();
+				break;
+			case main_region_Play_inner_region_Black_fallen:
+				react_main_region_Play_inner_region_Black_fallen();
+				break;
 			case main_region_Init_time_white:
 				react_main_region_Init_time_white();
 				break;
 			case main_region_Init_time_black:
 				react_main_region_Init_time_black();
+				break;
+			case main_region_Increment_time:
+				react_main_region_Increment_time();
 				break;
 			default:
 				// $NullState$
